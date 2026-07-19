@@ -206,18 +206,21 @@ int sessionLengthInput = input.int(60, "Session Length", minval = MIN_SESSION_LE
 
 // Anchor 1
 bool enableAnchor1Input = input.bool(true, "Enable Anchor 1", group = "ANCHOR 1", tooltip = "Enables the first anchor point.")
-string anchor1NameInput = input.string("COVID LOW", "Anchor 1 Name", group = "ANCHOR 1", tooltip = "Sets the label for anchor 1.")
+string anchor1NameInput = input.string("COVID Low", "Anchor 1 Name", group = "ANCHOR 1", tooltip = "Sets the label for anchor 1.")
 int anchor1DateInput = input.time(DEFAULT_ANCHOR_DATE, "Anchor 1 Date", group = "ANCHOR 1", tooltip = "Sets the date for anchor 1.")
+color anchor1ColorInput = input.color(color.red, "Anchor 1 Color", group = "ANCHOR 1", tooltip = "Color for anchor 1.")
 
 // Anchor 2
 bool enableAnchor2Input = input.bool(false, "Enable Anchor 2", group = "ANCHOR 2", tooltip = "Enables the second anchor point.")
-string anchor2NameInput = input.string("Custom 2", "Anchor 2 Name", group = "ANCHOR 2", tooltip = "Sets the label for anchor 2.")
+string anchor2NameInput = input.string("Anchor 2", "Anchor 2 Name", group = "ANCHOR 2", tooltip = "Sets the label for anchor 2.")
 int anchor2DateInput = input.time(timestamp("2000-01-01T00:00:00"), "Anchor 2 Date", group = "ANCHOR 2", tooltip = "Sets the date for anchor 2.")
+color anchor2ColorInput = input.color(color.blue, "Anchor 2 Color", group = "ANCHOR 2", tooltip = "Color for anchor 2.")
 
 // Anchor 3
 bool enableAnchor3Input = input.bool(false, "Enable Anchor 3", group = "ANCHOR 3", tooltip = "Enables the third anchor point.")
-string anchor3NameInput = input.string("Custom 3", "Anchor 3 Name", group = "ANCHOR 3", tooltip = "Sets the label for anchor 3.")
+string anchor3NameInput = input.string("Anchor 3", "Anchor 3 Name", group = "ANCHOR 3", tooltip = "Sets the label for anchor 3.")
 int anchor3DateInput = input.time(timestamp("2000-01-01T00:00:00"), "Anchor 3 Date", group = "ANCHOR 3", tooltip = "Sets the date for anchor 3.")
+color anchor3ColorInput = input.color(color.green, "Anchor 3 Color", group = "ANCHOR 3", tooltip = "Color for anchor 3.")
 
 // Intraday Cycles
 string intradayCyclesInput = input.string("30,45,60,90,120,180", "Intraday Cycle Lengths", group = "INTRADAY CYCLES", tooltip = "Comma-separated intraday cycle lengths.")
@@ -321,14 +324,17 @@ bool cfg_enableDebug = enableDebugModeInput
 bool cfg_anchor1Enabled = enableAnchor1Input
 string cfg_anchor1Name = anchor1NameInput
 int cfg_anchor1Timestamp = anchor1DateInput
+color cfg_anchor1Color = anchor1ColorInput
 
 bool cfg_anchor2Enabled = enableAnchor2Input
 string cfg_anchor2Name = anchor2NameInput
 int cfg_anchor2Timestamp = anchor2DateInput
+color cfg_anchor2Color = anchor2ColorInput
 
 bool cfg_anchor3Enabled = enableAnchor3Input
 string cfg_anchor3Name = anchor3NameInput
 int cfg_anchor3Timestamp = anchor3DateInput
+color cfg_anchor3Color = anchor3ColorInput
 
 // Visual configuration
 color cfg_intradayColor = intradayLineColorInput
@@ -432,6 +438,17 @@ f_CFG_getAnchorTimestamp(anchorTimestamp) =>
 // Future responsibilities: Expand with more granular validation rules.
 f_CFG_validateAnchor(anchorEnabled, anchorName, anchorTimestamp) =>
     f_CFG_isAnchorEnabled(anchorEnabled) and str.length(f_UTIL_trimString(anchorName)) > 0 and not na(anchorTimestamp)
+
+// Purpose: Expose anchor configuration values for future modules.
+// Inputs: anchorIndex - the requested anchor identifier.
+// Outputs: A tuple containing the anchor enabled state, name, timestamp, and color.
+f_ANCH_getAnchorConfig(int anchorIndex) =>
+    if anchorIndex == 0
+        [cfg_anchor1Enabled, cfg_anchor1Name, cfg_anchor1Timestamp, cfg_anchor1Color]
+    else if anchorIndex == 1
+        [cfg_anchor2Enabled, cfg_anchor2Name, cfg_anchor2Timestamp, cfg_anchor2Color]
+    else
+        [cfg_anchor3Enabled, cfg_anchor3Name, cfg_anchor3Timestamp, cfg_anchor3Color]
 
 // Purpose: Resolve the active anchor from the available configuration values.
 // Inputs: anchor1Enabled, anchor1Name, anchor1Timestamp, anchor2Enabled, anchor2Name, anchor2Timestamp, anchor3Enabled, anchor3Name, anchor3Timestamp.
