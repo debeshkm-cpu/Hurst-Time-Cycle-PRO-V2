@@ -30,7 +30,10 @@ Foundation Architecture Complete
 ## Roadmap
 
 - [x] Foundation Architecture
-- [ ] Time Intelligence Engine
+- [x] Time Intelligence Foundation (Milestone 4A)
+- [ ] Trading Day Index
+- [ ] Trading Week Index
+- [ ] Anchor Normalization
 - [ ] Cycle Engine
 - [ ] Confluence Engine
 - [ ] Projection Engine
