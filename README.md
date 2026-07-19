@@ -97,3 +97,25 @@ TradingView Pine Script v6
 ## License
 
 Private Project
+---
+
+## Version History
+
+### v2.0.0-alpha.4B
+- Corrected default project anchor date
+- Default anchor changed from 02-Mar-2020 to 24-Mar-2020
+- Established a single source of truth for the default anchor
+- Verified successful compilation in TradingView
+
+### v2.0.0-alpha.4A
+- Implemented Time Intelligence Foundation
+- Added current bar index
+- Added current timestamp
+- Added trading day detection
+- Added trading week detection
+
+### v2.0.0-alpha.3
+- Foundation Architecture Complete
+- GitHub repository created
+- Project structure established
+- Initial TradingView compilation successful
