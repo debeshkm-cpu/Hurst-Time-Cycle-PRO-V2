@@ -33,6 +33,7 @@ const string PROJECT_AUTHOR = "Community Framework"
 const string PROJECT_STATUS = "Development"
 
 const int DEFAULT_ANCHOR_PERIOD = 20
+const int DEFAULT_ANCHOR_DATE = timestamp("2020-03-24T00:00:00")
 const int DEFAULT_BAR_CYCLE_LENGTH = 50
 const int DEFAULT_DAY_CYCLE_LENGTH = 20
 const int DEFAULT_WEEK_CYCLE_LENGTH = 10
@@ -206,7 +207,7 @@ int sessionLengthInput = input.int(60, "Session Length", minval = MIN_SESSION_LE
 // Anchor 1
 bool enableAnchor1Input = input.bool(true, "Enable Anchor 1", group = "ANCHOR 1", tooltip = "Enables the first anchor point.")
 string anchor1NameInput = input.string("COVID LOW", "Anchor 1 Name", group = "ANCHOR 1", tooltip = "Sets the label for anchor 1.")
-int anchor1DateInput = input.time(timestamp("2020-03-02T00:00:00"), "Anchor 1 Date", group = "ANCHOR 1", tooltip = "Sets the date for anchor 1.")
+int anchor1DateInput = input.time(DEFAULT_ANCHOR_DATE, "Anchor 1 Date", group = "ANCHOR 1", tooltip = "Sets the date for anchor 1.")
 
 // Anchor 2
 bool enableAnchor2Input = input.bool(false, "Enable Anchor 2", group = "ANCHOR 2", tooltip = "Enables the second anchor point.")
