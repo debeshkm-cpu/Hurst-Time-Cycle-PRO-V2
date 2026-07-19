@@ -503,6 +503,8 @@ var int currentMonth = 0
 var int currentYear = 0
 var bool isNewTradingDay = false
 var bool isNewTradingWeek = false
+var int tradingDayCounter = 0
+var int currentTradingDayCounter = 0
 
 // Purpose: Return the current TradingView bar index.
 // Inputs: None.
@@ -546,6 +548,12 @@ f_TIME_isNewTradingDay() =>
 f_TIME_isNewTradingWeek() =>
     not na(time[1]) and (weekofyear(time) != weekofyear(time[1]) or year(time) != year(time[1]))
 
+// Purpose: Return the persistent trading day counter.
+// Inputs: None.
+// Outputs: The current trading day counter value.
+f_TIME_getTradingDayCounter() =>
+    tradingDayCounter
+
 // Purpose: Return the placeholder trading session start timestamp.
 // Inputs: None.
 // Outputs: A placeholder session start timestamp.
@@ -564,7 +572,7 @@ f_TIME_getTradingSessionEnd() =>
 // Inputs: None.
 // Outputs: A placeholder trading day index.
 // Future implementation notes: Replace with actual day indexing logic.
-f_TIME_getTradingDayNumber() =>
+f_TIME_getTradingDayIndex() =>
     0
 
 // Purpose: Return the current week number.
@@ -667,10 +675,13 @@ bool projectionEngineReady = true
 
 // Purpose: Placeholder initialization for the Time Engine module.
 // Inputs: None.
-// Outputs: A tuple containing the computed time values and readiness flag.
+// Outputs: A tuple containing the computed time values, readiness flag, and counter.
 // Future responsibilities: Hold time-related logic and helpers.
 f_TIME_engineInit() =>
-    [f_TIME_getCurrentBarIndex(), f_TIME_getCurrentTimestamp(), f_TIME_getCurrentDay(), f_TIME_getWeekNumber(), f_TIME_getCurrentMonth(), f_TIME_getCurrentYear(), f_TIME_isNewTradingDay(), f_TIME_isNewTradingWeek(), timeIntelligenceReady]
+    bool newTradingDay = f_TIME_isNewTradingDay()
+    if not barstate.isfirst and newTradingDay
+        tradingDayCounter := tradingDayCounter + 1
+    [f_TIME_getCurrentBarIndex(), f_TIME_getCurrentTimestamp(), f_TIME_getCurrentDay(), f_TIME_getWeekNumber(), f_TIME_getCurrentMonth(), f_TIME_getCurrentYear(), newTradingDay, f_TIME_isNewTradingWeek(), timeIntelligenceReady, f_TIME_getTradingDayCounter()]
 
 // Purpose: Placeholder initialization for the Cycle Engine module.
 // Inputs: None.
@@ -705,6 +716,7 @@ var string frameworkStatus = "Idle"
 if barstate.isfirst
     frameworkInitialized := true
     frameworkStatus := "Framework Initialized"
+    tradingDayCounter := 0
 
 if frameworkInitialized
     [activeAnchorEnabled, activeAnchorName, activeAnchorTimestamp, activeAnchorIndex] = f_ANCH_anchorManagerInit()
@@ -712,7 +724,7 @@ if frameworkInitialized
     f_CYCLE_cycleParserInit()
     f_DRAW_drawingUtilitiesInit()
     f_DASH_dashboardFrameworkInit()
-    [currentBarIndex, currentTimestamp, currentTradingDay, currentWeek, currentMonth, currentYear, isNewTradingDay, isNewTradingWeek, _] = f_TIME_engineInit()
+    [currentBarIndex, currentTimestamp, currentTradingDay, currentWeek, currentMonth, currentYear, isNewTradingDay, isNewTradingWeek, _, currentTradingDayCounter] = f_TIME_engineInit()
     f_CYCLE_engineInit()
     f_CONFLUENCE_engineInit()
     f_PROJECTION_engineInit()
