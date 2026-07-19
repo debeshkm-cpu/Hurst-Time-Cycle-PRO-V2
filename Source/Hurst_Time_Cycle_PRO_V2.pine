@@ -477,17 +477,56 @@ f_ANCH_anchorManagerInit() =>
 // Placeholder configuration values
 bool timeEngineReady = true
 bool sessionOpen = false
-int currentTradingDay = 0
-int currentWeek = 0
-int currentMonth = 0
-int currentYear = 0
+var int currentBarIndex = 0
+var int currentTimestamp = 0
+var int currentTradingDay = 0
+var int currentWeek = 0
+var int currentMonth = 0
+var int currentYear = 0
+var bool isNewTradingDay = false
+var bool isNewTradingWeek = false
 
-// Purpose: Return the current bar timestamp as a placeholder.
+// Purpose: Return the current TradingView bar index.
 // Inputs: None.
-// Outputs: A placeholder timestamp value.
-// Future implementation notes: Replace with the actual current bar time source.
+// Outputs: The current bar index.
+f_TIME_getCurrentBarIndex() =>
+    bar_index
+
+// Purpose: Return the current bar timestamp.
+// Inputs: None.
+// Outputs: The current bar timestamp.
 f_TIME_getCurrentTimestamp() =>
     time
+
+// Purpose: Return the current calendar day of month.
+// Inputs: None.
+// Outputs: The current day of month.
+f_TIME_getCurrentDay() =>
+    dayofmonth(time)
+
+// Purpose: Return the current calendar month.
+// Inputs: None.
+// Outputs: The current month.
+f_TIME_getCurrentMonth() =>
+    month(time)
+
+// Purpose: Return the current calendar year.
+// Inputs: None.
+// Outputs: The current year.
+f_TIME_getCurrentYear() =>
+    year(time)
+
+// Purpose: Return whether a new trading day has begun.
+// Inputs: None.
+// Outputs: True when the current bar belongs to a new trading day.
+f_TIME_isNewTradingDay() =>
+    not na(time[1]) and (dayofmonth(time) != dayofmonth(time[1]) or month(time) != month(time[1]) or year(time) != year(time[1]))
+
+// Purpose: Return whether a new trading week has begun.
+// Inputs: None.
+// Outputs: True when the current bar belongs to a new trading week.
+f_TIME_isNewTradingWeek() =>
+    not na(time[1]) and (weekofyear(time) != weekofyear(time[1]) or year(time) != year(time[1]))
 
 // Purpose: Return the placeholder trading session start timestamp.
 // Inputs: None.
@@ -510,12 +549,11 @@ f_TIME_getTradingSessionEnd() =>
 f_TIME_getTradingDayNumber() =>
     0
 
-// Purpose: Return the placeholder week number.
+// Purpose: Return the current week number.
 // Inputs: None.
-// Outputs: A placeholder week index.
-// Future implementation notes: Replace with actual week indexing logic.
+// Outputs: The current week number.
 f_TIME_getWeekNumber() =>
-    0
+    weekofyear(time)
 
 // Purpose: Return the placeholder month number.
 // Inputs: None.
@@ -611,10 +649,10 @@ bool projectionEngineReady = true
 
 // Purpose: Placeholder initialization for the Time Engine module.
 // Inputs: None.
-// Outputs: Boolean readiness flag.
+// Outputs: A tuple containing the computed time values and readiness flag.
 // Future responsibilities: Hold time-related logic and helpers.
 f_TIME_engineInit() =>
-    timeIntelligenceReady
+    [f_TIME_getCurrentBarIndex(), f_TIME_getCurrentTimestamp(), f_TIME_getCurrentDay(), f_TIME_getWeekNumber(), f_TIME_getCurrentMonth(), f_TIME_getCurrentYear(), f_TIME_isNewTradingDay(), f_TIME_isNewTradingWeek(), timeIntelligenceReady]
 
 // Purpose: Placeholder initialization for the Cycle Engine module.
 // Inputs: None.
@@ -656,7 +694,7 @@ if frameworkInitialized
     f_CYCLE_cycleParserInit()
     f_DRAW_drawingUtilitiesInit()
     f_DASH_dashboardFrameworkInit()
-    f_TIME_engineInit()
+    [currentBarIndex, currentTimestamp, currentTradingDay, currentWeek, currentMonth, currentYear, isNewTradingDay, isNewTradingWeek, _] = f_TIME_engineInit()
     f_CYCLE_engineInit()
     f_CONFLUENCE_engineInit()
     f_PROJECTION_engineInit()
